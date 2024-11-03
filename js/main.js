@@ -39,7 +39,6 @@ async function manipularBusca() {
   const termoBusca = document.getElementById("campo-busca").value
   try {
     const pensamentosFiltrados = await api.buscarPendamentosPorTermo(termoBusca)
-    console.log(pensamentosFiltrados)
     ui.renderizarPensamentos(pensamentosFiltrados)
   } catch (error) {
     alert("Erro ao realizar busca")
