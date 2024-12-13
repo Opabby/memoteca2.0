@@ -1,5 +1,10 @@
 const URL_BASE = "http://localhost:3000"
 
+const converterStringParaData = (dataString) => {
+  const [ano, mês, dia] = dataString.split('-')
+  return new Date(Date.UTC(ano, mês, dia))
+}
+
 const api = {
   async buscarPensamentos() {
     try {
@@ -14,7 +19,11 @@ const api = {
 
   async salvarPensamento(pensamento) {
     try {
-      const response = await axios.post(`${URL_BASE}/pensamentos`, pensamento)
+      const data = converterStringParaData(pensamento.data)
+      const response = await axios.post(`${URL_BASE}/pensamentos`, {
+        ...pensamento,
+        data
+      })
       return await response.data
     }
     catch {
