@@ -1,11 +1,25 @@
 import ui from "./ui.js"
 import api from "./api.js"
 
+const pensamentosSet = new Set()
+
+async function adicionarChaveAoPensamento() {
+  try {
+    const pensamentos = await api.buscarPensamentos()
+    pensamentos.forEach(pensamento => {
+      const chavePensamento = `${pensamento.conteudo.trim().toLoweCase()}-${pensamentoautoria.trim().toLowerCase()}`
+      pensamentosSet.add(chavePensamento)
+    })
+  } catch (error) {
+    alert('Erro ao adicionar chave ao pensamento')
+  }
+}
+
 function removerEspaços(string) {
   return string.replaceAll(/\s+/g, "")
 }
 
-const regexConteudo = /^[A-Za-z\s]{10,}$/
+const regexConteudo = /^[\p{L}\s\p{P}]{10,}$/u
 const regexAutoria = /^[a-zA-Z]{3,15}$/
 
 function validarAutoria(autoria) {
@@ -18,6 +32,7 @@ function validarConteudo(conteudo) {
 
 document.addEventListener("DOMContentLoaded", () => {
   ui.renderizarPensamentos()
+  adicionarChaveAoPensamento()
 
   const formularioPensamento = document.getElementById("pensamento-form")
   const botaoCancelar = document.getElementById("botao-cancelar")
@@ -39,7 +54,7 @@ async function manipularSubmissaoFormulario(event) {
   const autoriaSemEspaços = removerEspaços(autoria)
 
   if(!validarConteudo(conteudoSemEspaços)) {
-    alert("É permitida a inclusão apenas de letras e espaçõs com no mínimo 10 caracteres")
+    alert("É permitida a inclusão apenas de letras e espaços com no mínimo 10 caracteres")
     return
   }
 
@@ -50,6 +65,15 @@ async function manipularSubmissaoFormulario(event) {
 
   if(!validarData(data)) {
     alert("Não é permitido o cadastro de datas futuras. Selecione outra data")
+    return
+  }
+
+  const chaveNovoPensamento = `
+    ${conteudo.trim().toLowerCase()}-${autoria.trim().toLowerCase()}
+  `
+
+  if(pensamentosSet.has(chaveNovoPensamento)) {
+    alert('Esse pensamento já existe')
     return
   }
 
